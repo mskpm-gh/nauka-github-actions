@@ -1,2 +1,2 @@
 # nauka-github-actions
-Kurs github
+Kurs github actions
