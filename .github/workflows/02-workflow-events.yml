@@ -9,7 +9,7 @@ on:
 jobs:
   echo-event-name:
     name: Say event name
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Echo event name
         run: echo "I'm triggered by a ${{ github.event_name }} event"
