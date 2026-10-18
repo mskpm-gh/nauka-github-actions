@@ -20,5 +20,6 @@ jobs:
           az deployment group what-if `
             --name "DeployMonitorVM-${{ github.run_id }}" `
             --resource-group "rg-PiotrMajkowski" `
+            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" `
             --template-file "../Innobaltica/NetWatcherMon/templates/main.bicep" `
             --parameters "../Innobaltica/NetWatcherMon/bicepparam/ver.bicepparam"
