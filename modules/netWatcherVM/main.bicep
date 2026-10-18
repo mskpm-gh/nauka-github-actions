@@ -5,7 +5,7 @@ param location string = resourceGroup().location
 param resourceTags object
 
 param targetSubscriptionId string // ID of the target subscription
-param targetEnv string // Environment: 'uat', 'dev', or 'prd'
+param targetEnv string // Environment: 'uat', 'dev', or 'prd (tst for rg-PiotrMajkowski)'
 param vmName string
 
 // Virtual Network and Subnet details for the backend VM

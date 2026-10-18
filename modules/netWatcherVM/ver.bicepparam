@@ -1,7 +1,7 @@
 using './main.bicep'
 
 param targetSubscriptionId = 'f3e2a318-c7da-4fa4-934b-e0ff5bb8f8cf'
-param targetEnv = 'ver'
+param targetEnv = 'tst'
 param vmName = 'NetWatcherMon-${targetEnv}'
 
 param resourceTags = {

@@ -1,10 +1,10 @@
-using '../templates/connection-monitor.bicep'
+using './connection-monitor.bicep'
+param targetEnv = 'tst'
+var subscriptionId = 'f3e2a318-c7da-4fa4-934b-e0ff5bb8f8cf'
 
-var subscriptionId = '7d33192c-4909-49bf-8fd0-0339f051608e'
-
-param networkWatcherName = 'NetworkWatcher_westeurope'
-param location = 'westeurope'
-param monitorName = 'cm-netwatchermon-ver'
+param networkWatcherName = 'NetworkWatcher_germanywestcentral'
+param location = 'germanywestcentral'
+param monitorName = 'cm-netwatchermon-${targetEnv}'
 param sourceVmResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-net-rg/providers/Microsoft.Compute/virtualMachines/NetWatcherMon-ver'
 param workspaceResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-prm-rg/providers/Microsoft.OperationalInsights/workspaces/ftst-law'
 param actionGroupResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-prm-rg/providers/microsoft.insights/actionGroups/fver-ag'
@@ -22,5 +22,5 @@ param publicApipayAddress = 'apipay.systemfala.pl'
 param sftpAdsAddress = '20.4.242.89'
 param tags = {
   Project: 'NetWatcherMon'
-  TargetEnv: 'VER'
+  TargetEnv: targetEnv
 }
