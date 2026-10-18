@@ -1,0 +1,24 @@
+name: 04 - Using Actions
+on:
+  workflow_dispatch:
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  use-action:
+    runs-on: self-hosted
+    steps:
+        # Pobranie kodu źródłowego z repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Wykonanie testu WhatIf za pomocą systemowego Azure CLI
+      - name: Bicep test Deployment (WhatIf)
+        shell: pwsh
+        run: |
+          az deployment group what-if `
+            --name "DeployMonitorVM-${{ github.run_id }}" `
+            --resource-group "rg-PiotrMajkowski" `
+            --template-file "../Innobaltica/NetWatcherMon/templates/main.bicep" `
+            --parameters "../Innobaltica/NetWatcherMon/bicepparam/ver.bicepparam"
