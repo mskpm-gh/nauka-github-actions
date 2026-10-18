@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. Wykonanie testu WhatIf za pomocą systemowego Azure CLI
-      - name: Bicep test Deployment (WhatIf)
+      - name: Bicep test Deployment
         shell: pwsh
         run: |
-          az deployment group what-if `
+          az deployment group `
             --name "DeployMonitorVM-${{ github.run_id }}" `
             --resource-group "rg-PiotrMajkowski" `
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" `
