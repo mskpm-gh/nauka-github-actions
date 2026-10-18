@@ -17,7 +17,7 @@ jobs:
       - name: Bicep test Deployment
         shell: pwsh
         run: |
-          az deployment group `
+          az deployment group create `
             --name "DeployMonitorVM-${{ github.run_id }}" `
             --resource-group "rg-PiotrMajkowski" `
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" `
