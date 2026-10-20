@@ -1,13 +1,22 @@
 using './connection-monitor.bicep'
 param targetEnv = 'tst'
 var subscriptionId = 'f3e2a318-c7da-4fa4-934b-e0ff5bb8f8cf'
+var resourceGroupName = 'NetWatcherRG'
+var vmResourceGroupName = 'rg-PiotrMajkowski'
+param vmWorkspaceName = 'law-inno-prod-krwgvnybe4eok'
+
+param monitorName = 'cm-NetWatcherMon-tst'
+
 
 param networkWatcherName = 'NetworkWatcher_germanywestcentral'
 param location = 'germanywestcentral'
-param monitorName = 'cm-netwatchermon-${targetEnv}'
-param sourceVmResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-net-rg/providers/Microsoft.Compute/virtualMachines/NetWatcherMon-ver'
-param workspaceResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-prm-rg/providers/Microsoft.OperationalInsights/workspaces/ftst-law'
-param actionGroupResourceId = '/subscriptions/${subscriptionId}/resourceGroups/fver-prm-rg/providers/microsoft.insights/actionGroups/fver-ag'
+
+param sourceVmResourceId = '/subscriptions/${subscriptionId}/resourceGroups/${vmResourceGroupName}/providers/Microsoft.Compute/virtualMachines/NetWatcherMon-${targetEnv}'
+
+param workspaceResourceId = '/subscriptions/${subscriptionId}/resourceGroups/${vmResourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/${vmWorkspaceName}'
+
+param actionGroupResourceId = '/subscriptions/${subscriptionId}/resourceGroups/${vmResourceGroupName}/providers/microsoft.insights/actionGroups/VMI-ActionGroup-vm-backend-prod-01'
+
 param testFrequencySec = 300
 param kafkaAddress = 'kafka.falaver.sc.ads'
 param gatewayAddress = 'api-dev.falaver.sc.ads'

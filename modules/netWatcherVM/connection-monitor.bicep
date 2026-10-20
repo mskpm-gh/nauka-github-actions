@@ -19,6 +19,7 @@
 //   15 | Portal klienta, POK, konsola, Keycloak | -                    | P1   | BRAK
 // Cele oznaczone BRAK czekają na FQDN/port/ścieżkę od właścicieli (szczegóły: docs, rozdz. 16).
 param targetEnv string = 'tst'
+param vmWorkspaceName string = 'law-inno-prod-krwgvnybe4eok'
 param networkWatcherName string
 param location string = resourceGroup().location
 param monitorName string
@@ -67,22 +68,12 @@ var postgresAdditionalGroups = [
 // Existing Network Watcher resource reference
 resource nw 'Microsoft.Network/networkWatchers@2023-11-01' existing = {
   name: networkWatcherName
-  scope: resourceGroup('NetworkWatcherRG')
 }
-
-// // 2. Dynamicznie zbuduj identyfikator do grupy NetworkWatcherRG
-// var networkWatcherResourceId = resourceId(
-//   subscription().subscriptionId, 
-//   'NetworkWatcherRG', 
-//   'Microsoft.Network/networkWatchers', 
-//   networkWatcherName
-// )
 
 // Deployment of the connection monitor module
 resource cm 'Microsoft.Network/networkWatchers/connectionMonitors@2023-11-01' = {
-  //parent: nw
-  #disable-next-line use-parent-property
-  name: '${nw.name}/${monitorName}'
+  parent: nw
+  name: monitorName
   location: location
   tags: tags
   properties: {
