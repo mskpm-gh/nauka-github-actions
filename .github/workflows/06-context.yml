@@ -1,6 +1,14 @@
-name: 06-Context workflow
-on: workflow_dispatch
-run-name: ${{ os.name }}
+name: 06-Context workflow 
+run-name: 06-Context | Debug - ${{ inputs.debug }}
+  
+on: 
+    workflow_dispatch:
+        inputs:
+            debug:
+                type: boolean   
+                description: 'Enable debug mode'
+                default: false
+
 jobs:
     echo-data:
         runs-on: ubuntu-latest
