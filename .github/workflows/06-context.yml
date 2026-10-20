@@ -8,39 +8,45 @@ on:
                 type: boolean   
                 description: 'Enable debug mode'
                 default: false
-env: |
+env:
     MY_WORKFLOW_VAR: 'workflow'
     MY_OVERWRITTEN_VAR: 'workflow'
-jobs:
-    env:
-        MY_ENV_JOB_VAR: 'job'
-        MY_OVERWRITTEN_VAR: 'job'
-    echo-data:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Display information
-              run: |
-                    echo "Job: ${{ github.job }}"
-                    echo "Event name: ${{ github.event_name }}"
-                    echo "Ref: ${{ github.ref }}"
-                    echo "SHA: ${{ github.sha }}"
-                    echo "Actor: ${{ github.actor }}"
-                    echo "Repository: ${{ github.repository }}"
-                    echo "Workflow: ${{ github.workflow }}"
-                    echo "Run ID: ${{ github.run_id }}"
-                    echo "Run number: ${{ github.run_number }}"
-                    echo "Debug mode: ${{ inputs.debug }}"
-            - name: Retrieve variables
-              run: |
-                    echo "Variable MyVar: ${{ vars.MY_VAR }}"
-            - name: Retrieve some secrets
-              run: |
-                    echo "Azure Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-                    echo "Azure Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
-            - name: Print env variables
-              env:
-                  MY_OVERWRITTEN_VAR: 'step'
-              run: |
-              echo "Workflow var: ${{ env.MY_WORKFLOW_VAR }}"
-              echo "Overwritten var: ${{env.MY_OVERWRITTEN_VAR}}"
                     
+jobs:
+  echo-data:
+    runs-on: ubuntu-latest
+    env:
+      MY_JOB_VAR: 'job'
+      MY_OVERWRITTEN_VAR: 'job'
+    steps:
+      - name: Display information
+        run: |
+          echo "Job: ${{ github.job }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run number: ${{ github.run_number }}"
+          echo "Debug mode: ${{ inputs.debug }}"
+      - name: Retrieve variables
+        run: |
+            echo "Variable MyVar: ${{ vars.MY_VAR }}"
+            echo "Variable MyOverwrittenVar: ${{ vars.MY_OVERWRITTEN_VAR }}"
+      - name: Retrieve some secrets
+        run: |
+            echo "Azure Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            echo "Azure Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
+      - name: Print env variables
+        env:
+          MY_OVERWRITTEN_VAR: 'step'
+        run: |
+            echo "Workflow env: ${{ env.MY_WORKFLOW_VAR }}"
+            echo "Overwritten env: ${{env.MY_OVERWRITTEN_VAR}}"
+      - name: Print job env variables
+        run: |
+            echo "Job env: ${{ env.MY_JOB_VAR }}"
+            echo "Overwritten env: ${{ env.MY_OVERWRITTEN_VAR }}"
+                
