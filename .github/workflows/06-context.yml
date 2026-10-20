@@ -8,8 +8,13 @@ on:
                 type: boolean   
                 description: 'Enable debug mode'
                 default: false
-
+env: |
+    MY_WORKFLOW_VAR: 'workflow'
+    MY_OVERWRITTEN_VAR: 'workflow'
 jobs:
+    env:
+        MY_ENV_JOB_VAR: 'job'
+        MY_OVERWRITTEN_VAR: 'job'
     echo-data:
         runs-on: ubuntu-latest
         steps:
@@ -24,6 +29,7 @@ jobs:
                     echo "Workflow: ${{ github.workflow }}"
                     echo "Run ID: ${{ github.run_id }}"
                     echo "Run number: ${{ github.run_number }}"
+                    echo "Debug mode: ${{ inputs.debug }}"
             - name: Retrieve variables
               run: |
                     echo "Variable MyVar: ${{ vars.MY_VAR }}"
@@ -31,3 +37,10 @@ jobs:
               run: |
                     echo "Azure Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
                     echo "Azure Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
+            - name: Print env variables
+              env:
+                  MY_OVERWRITTEN_VAR: 'step'
+              run: |
+              echo "Workflow var: ${{ env.MY_WORKFLOW_VAR }}"
+              echo "Overwritten var: ${{env.MY_OVERWRITTEN_VAR}}"
+                    
