@@ -19,3 +19,7 @@ jobs:
             - name: Retrieve variables
               run: |
                     echo "Variable MyVar: ${{ vars.MY_VAR }}"
+            - name: Retrieve some secrets
+              run: |
+                    echo "Azure Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+                    echo "Azure Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
