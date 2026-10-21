@@ -1,0 +1,29 @@
+name: 08 - Using Variables Example
+on:
+  push:
+  workflow_dispatch:
+env:
+  GLOBAL_VAR: "global (workflow) env variable!"
+  OVERWRITE_VAR: "global overwrite variable!"
+jobs:
+  echo:
+    env:
+      JOB_VAR: "job env variable!"
+      OVERWRITE_VAR: "job overwrite variable!"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print env variables
+        env:
+          STEP_VAR: "step env variable!"
+          step_var2: "step env variable 2!"
+        run: |
+          echo ${{ env.STEP_VAR }}
+          echo '$env.step_var2'
+          echo ${{ env.JOB_VAR }}
+          echo "${{ env.GLOBAL_VAR }}"
+          echo "${{ env.OVERWRITE_VAR }}"
+      - name: override job variable
+        env:
+          OVERWRITE_VAR: "step overwrite variable!"
+        run: |
+          echo "${{ env.OVERWRITE_VAR }}"
