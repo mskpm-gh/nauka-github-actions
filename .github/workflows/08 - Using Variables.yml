@@ -3,7 +3,7 @@ on:
   push:
   workflow_dispatch:
 env:
-  GLOBAL_VAR: "global (workflow) env variable!"
+  GLOBAL_VAR: "global env variable!"
   OVERWRITE_VAR: "global overwrite variable!"
 jobs:
   echo:
