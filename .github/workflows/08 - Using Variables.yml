@@ -18,7 +18,7 @@ jobs:
           step_var2: "step env variable 2!"
         run: |
           echo ${{ env.STEP_VAR }}
-          echo $env.step_var2
+          echo $step_var2
           echo ${{ env.JOB_VAR }}
           echo ${{ env.GLOBAL_VAR }}
           echo "${{ env.OVERWRITE_VAR }}"
