@@ -1,0 +1,33 @@
+name: 07 - Expression Example
+on: 
+  push:
+  workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        default: false
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ inputs.debug }}
+        name: '[debug] print start-up data'
+        run: |
+          echo "Triggered by ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Runner OS: ${{ runner.os }}"
+      - name: '[debug] when triggered from main'
+        if: ${{ inputs.debug && github.ref == 'refs/heads/main' }}
+        run: |
+          echo "This workflow was triggered from the main branch."
+      - name: '[debug] when triggered from a branch other than main'
+        if: ${{ inputs.debug && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "This workflow was triggered from a branch other than main."
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"
+      - name: Say hello
+        run: |
+          echo "Hello World!"
