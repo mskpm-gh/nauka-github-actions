@@ -6,9 +6,11 @@ on:
 jobs:
   echo1:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - name: Sleep for 10 sec
-        shell: powershell
         run: Start-Sleep -Seconds 10
       - name: Failing Step
         run: exit 1
