@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Sleep for 10 sec
         shell: cmd
-        run: timeout /t 10 /nobreak
+        run: ping 127.0.0.1 -n 11 > nul
 
       - name: Failing Step
         run: exit 1
