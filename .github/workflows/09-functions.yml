@@ -6,23 +6,30 @@ on:
 jobs:
   echo1:
     runs-on: self-hosted
+    # Wymusza użycie PowerShell Core dla każdego kroku w tym zadaniu
     defaults:
       run:
         shell: pwsh
+
     steps:
       - name: Sleep for 10 sec
         run: Start-Sleep -Seconds 10
+
       - name: Failing Step
         run: exit 1
+
       - name: I will be skipped
         if: ${{ success() }}
-        run: echo "I will print if the previous step succeeds"
+        run: Write-Host "I will print if the previous step succeeds"
+
       - name: I will execute
         if: ${{ failure() }}
-        run: echo "I will print if the previous step fails"
+        run: Write-Host "I will print if the previous step fails"
+
       - name: I will execute
         if: ${{ !cancelled() }}
-        run: echo "I will always print if the previous step was not cancelled"
+        run: Write-Host "I will always print if the previous step was not cancelled"
+
       - name: I will execute when canceled
         if: ${{ cancelled() }}
-        run: echo "I will print if the workflow will be cancelled"
+        run: Write-Host "I will print if the workflow will be cancelled"
