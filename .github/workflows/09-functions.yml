@@ -13,8 +13,7 @@ jobs:
 
     steps:
       - name: Sleep for 10 sec
-        shell: cmd
-        run: ping 127.0.0.1 -n 11 > nul
+        run: $host.SetShouldExit(1)
 
       - name: Failing Step
         run: exit 1
