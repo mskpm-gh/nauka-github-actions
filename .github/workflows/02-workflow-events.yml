@@ -1,9 +1,9 @@
 name: 02 - Workflow Events
 on:
   workflow_dispatch:
-  pull_request:
-  schedule:
-    - cron: "*/15 * * * *"
+  # pull_request:
+  # schedule:
+  #   - cron: "*/15 * * * *"
 
 jobs:
   echo-event-name:
