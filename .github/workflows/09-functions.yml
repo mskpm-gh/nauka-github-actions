@@ -13,7 +13,8 @@ jobs:
 
     steps:
       - name: Sleep for 10 sec
-        run: Start-Sleep -Seconds 10
+        shell: cmd
+        run: timeout /t 10 /nobreak
 
       - name: Failing Step
         run: exit 1
