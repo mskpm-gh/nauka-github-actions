@@ -13,6 +13,7 @@ jobs:
 
     steps:
       - name: Sleep for 10 sec
+        shell: pwsh
         run: $host.SetShouldExit(1)
 
       - name: Failing Step
