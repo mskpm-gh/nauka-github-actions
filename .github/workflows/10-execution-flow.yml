@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Simulate Lint and Build
         run: |
-          Write-Host "Simulating Lint and Build"
+          echo Simulating Lint and Build
 
   # Unit Test job
   unit-test:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Simulate Unit Tests
         run: |
-          Write-Host "Simulating Unit Tests"
+          echo Simulating Unit Tests
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
         # Bezpieczne i natywne zamknięcie procesu w PowerShell Core
@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Simulate Deploy to Non-Prod
         run: |
-          Write-Host "Simulating Deploy to Non-Prod"
+          echo Simulating Deploy to Non-Prod
 
   # E2E Tests job
   e2e-tests:
@@ -52,7 +52,7 @@ jobs:
     steps:
       - name: Simulate E2E Tests
         run: |
-          Write-Host "Simulating E2E Tests"
+          echo Simulating E2E Tests
 
   # Load Test job
   load-test:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Simulate Load Test
         run: |
-          Write-Host "Simulating Load Test"
+          echo Simulating Load Test
 
   # Deploy to Prod job
   deploy-prod:
@@ -73,4 +73,4 @@ jobs:
     steps:
       - name: Simulate Deploy to Prod
         run: |
-          Write-Host "Simulating Deploy to Prod"
+          echo Simulating Deploy to Prod
