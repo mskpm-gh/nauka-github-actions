@@ -7,13 +7,15 @@ on:
         description: Whether the tests will pass or fail
         default: true
 
+# GLOBALNE USTAWIENIE: Zabezpiecza cały plik na Windows 11 przed zawieszaniem okien
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
   # Lint and Build job
   lint-build:
     runs-on: self-hosted
-    defaults:
-      run:
-        shell: pwsh
     steps:
       - name: Simulate Lint and Build
         run: |
@@ -28,7 +30,8 @@ jobs:
           Write-Host "Simulating Unit Tests"
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
-        run: exit /b1
+        # Bezpieczne i natywne zamknięcie procesu w PowerShell Core
+        run: $host.SetShouldExit(1)
 
   # Deploy to Non-Prod job
   deploy-nonprod:
