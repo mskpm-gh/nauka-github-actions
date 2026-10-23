@@ -16,7 +16,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Simulating Lint and Build"
-          ../dots-animation.ps1
+          .\dots-animation.ps1
   # Unit Test job
   unit-test:
     runs-on: self-hosted
@@ -25,7 +25,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Simulating Unit Tests"
-          ../dots-animation.ps1
+          .\dots-animation.ps1
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
         shell: pwsh
@@ -41,7 +41,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Simulating Deploy to Non-Prod"
-          ../dots-animation.ps1
+          .\dots-animation.ps1
   # E2E Tests job
   e2e-tests:
     runs-on: self-hosted
@@ -52,7 +52,7 @@ jobs:
         run: |
           echo "Simulating E2E Tests"
           shell: pwsh
-          ../dots-animation.ps1
+          .\dots-animation.ps1
   # Load Test job
   load-test:
     runs-on: self-hosted
@@ -63,7 +63,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Simulating Load Test"
-          ../dots-animation.ps1
+          .\dots-animation.ps1
   # Deploy to Prod job
   deploy-prod:
     runs-on: self-hosted
@@ -76,4 +76,4 @@ jobs:
         run: |
           echo "Simulating Deploy to Prod"
           shell: pwsh
-          ../dots-animation.ps1
+          .\dots-animation.ps1
