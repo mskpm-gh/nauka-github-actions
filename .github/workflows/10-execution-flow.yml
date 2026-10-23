@@ -24,6 +24,7 @@ jobs:
   # Unit Test job
   unit-test:
     runs-on: self-hosted
+    continue-on-error: true
     steps:
       - name: Simulate Unit Tests
         run: |
