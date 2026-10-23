@@ -28,6 +28,7 @@ jobs:
       - name: Simulate Unit Tests
         run: |
           echo Simulating Unit Tests
+          echo Simulating Unit Tests > con
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
         run: exit 1
