@@ -10,7 +10,7 @@ on:
 # GLOBALNE USTAWIENIE: Zabezpiecza cały plik na Windows 11 przed zawieszaniem okien
 defaults:
   run:
-    shell: pwsh
+    shell: cmd
 
 jobs:
   # Lint and Build job
