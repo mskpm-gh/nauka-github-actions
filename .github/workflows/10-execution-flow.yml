@@ -28,7 +28,7 @@ jobs:
           Write-Host "Simulating Unit Tests"
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
-        run: exit 1
+        run: exit /b1
 
   # Deploy to Non-Prod job
   deploy-nonprod:
