@@ -12,15 +12,20 @@ jobs:
   lint-build:
     runs-on: self-hosted
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate Lint and Build
         shell: pwsh
         run: |
           echo "Simulating Lint and Build"
           .\dots-animation.ps1
+
   # Unit Test job
   unit-test:
     runs-on: self-hosted
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate Unit Tests
         shell: pwsh
         run: |
@@ -30,6 +35,7 @@ jobs:
         if: ${{ !inputs.pass-unit-tests }}
         shell: pwsh
         run: exit 1
+
   # Deploy to Non-Prod job
   deploy-nonprod:
     runs-on: self-hosted
@@ -37,33 +43,42 @@ jobs:
       - lint-build
       - unit-test
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate Deploy to Non-Prod
         shell: pwsh
         run: |
           echo "Simulating Deploy to Non-Prod"
           .\dots-animation.ps1
+
   # E2E Tests job
   e2e-tests:
     runs-on: self-hosted
     needs:
       - deploy-nonprod
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate E2E Tests
+        shell: pwsh
         run: |
           echo "Simulating E2E Tests"
-          shell: pwsh
           .\dots-animation.ps1
+
   # Load Test job
   load-test:
     runs-on: self-hosted
     needs:
       - deploy-nonprod
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate Load Test
         shell: pwsh
         run: |
           echo "Simulating Load Test"
           .\dots-animation.ps1
+
   # Deploy to Prod job
   deploy-prod:
     runs-on: self-hosted
@@ -71,9 +86,10 @@ jobs:
       - load-test
       - e2e-tests
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Simulate Deploy to Prod
         shell: pwsh
         run: |
           echo "Simulating Deploy to Prod"
-          shell: pwsh
           .\dots-animation.ps1
