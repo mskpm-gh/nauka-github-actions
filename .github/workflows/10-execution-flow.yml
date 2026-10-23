@@ -30,8 +30,7 @@ jobs:
           echo Simulating Unit Tests
       - name: Failing test
         if: ${{ !inputs.pass-unit-tests }}
-        # Bezpieczne i natywne zamknięcie procesu w PowerShell Core
-        run: $host.SetShouldExit(1)
+        run: exit 1
 
   # Deploy to Non-Prod job
   deploy-nonprod:
