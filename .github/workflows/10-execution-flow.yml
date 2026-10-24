@@ -26,7 +26,7 @@ jobs:
               ping 127.0.0.1 -n 2 >nul
               <nul set /p ="."
           )
-          echo.
+          echo
 
   # Unit Test job
   unit-test:
