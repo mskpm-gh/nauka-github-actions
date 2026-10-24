@@ -26,7 +26,8 @@ jobs:
               ping 127.0.0.1 -n 2 >nul
               <nul set /p ="."
           )
-          echo
+          :: Resetujemy ukryty błąd ERRORLEVEL pozostawiony przez komendę set /p
+          cmd /c exit 0
 
   # Unit Test job
   unit-test:
