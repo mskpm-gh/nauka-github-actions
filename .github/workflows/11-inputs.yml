@@ -28,7 +28,6 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: build
     if: ${{ !inputs.dry-run }}
     environment: ${{ inputs.target }}, ${{ inputs.tag }}
     steps:
