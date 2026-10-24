@@ -20,7 +20,7 @@ on:
         description: Release to which version to build and deploy
 
 jobs:
-  buid:
+  build:
     runs-on: self-hosted
     steps:
       - name: Build
@@ -28,6 +28,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: build
     if: ${{ !inputs.dry-run }}
     environment: ${{ inputs.target }}, ${{ inputs.tag }}
     steps:
