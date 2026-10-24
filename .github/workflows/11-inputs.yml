@@ -1,0 +1,35 @@
+name: 11 - Working with Inputs
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        type: boolean
+        description: Skip deployment only print output
+        default: false
+      target:
+        type: environment
+        required: true
+        description: Target environment for deployment
+      tag:
+        type: choice
+        options:
+          - v1
+          - v2
+          - v3
+        default: v3
+        description: Release to which version to build and deploy
+
+jobs:
+  buid:
+    runs-on: self-hosted
+    steps:
+      - name: Build
+        run: echo building...from tag ${{ inputs.tag }}
+
+  deploy:
+    runs-on: self-hosted
+    if: ${{ !inputs.dry-run }}
+    environment: ${{ inputs.target }}, ${{ inputs.tag }}
+    steps:
+      - name: Deploy
+        run: echo deploying to ${{ inputs.target }} with tag ${{ inputs.tag }}
