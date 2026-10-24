@@ -5,7 +5,7 @@ on:
       dry-run:
         type: boolean
         description: Skip deployment only print output
-        default: false
+        default: true
       target:
         type: environment
         required: true
