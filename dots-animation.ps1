@@ -8,3 +8,4 @@ Write-Host "Compiling environment modules ..."
 [System.Threading.Thread]::Sleep(1000)
 
 Write-Host "Process completed successfully."
+
