@@ -16,7 +16,7 @@ jobs:
       build-status: ${{ steps.build.outputs.status }}
     steps:
       - name: Print output $GITHUB_OUTPUT path
-        run: echo "GITHUB_OUTPUT"
+        run: echo $GITHUB_OUTPUT
 
       - name: Build
         id: build
