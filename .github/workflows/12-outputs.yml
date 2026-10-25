@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
     outputs:
       build-status: ${{ steps.build.outputs.status }}
     steps:
@@ -26,6 +29,9 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
     needs: build
     if: ${{ needs.build.outputs.build-status == 'success' }}
     steps:
