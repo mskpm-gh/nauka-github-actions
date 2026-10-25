@@ -16,11 +16,13 @@ jobs:
       build-status: ${{ steps.build.outputs.status }}
     steps:
       - name: Print output $GITHUB_OUTPUT path
-        run: echo $env:GITHUB_OUTPUT
+        #run: echo $env:GITHUB_OUTPUT
+        run: echo "GITHUB_OUTPUT path is $GITHUB_OUTPUT"
 
       - name: Build
         id: build
-        run: echo "status=${{ inputs.build-status }}" >> $env:GITHUB_OUTPUT
+        #run: echo "status=${{ inputs.build-status }}" >> $env:GITHUB_OUTPUT
+        run: echo "status=${{ inputs.build-status }}" >> "$GITHUB_OUTPUT"
 
   deploy:
     runs-on: self-hosted
@@ -28,4 +30,4 @@ jobs:
     if: ${{ needs.build.outputs.build-status == 'success' }}
     steps:
       - name: Deploy
-        run: echo Deploying...
+        run: echo "Deploying..."
