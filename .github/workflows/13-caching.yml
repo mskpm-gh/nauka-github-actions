@@ -18,8 +18,44 @@ on:
         default: "20.x"
 
 jobs:
-  build:
+  install-dependencies:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      deps-cache-key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Calculate cache key
+        id: cache-key
+        run: |
+          echo "CACHE KEY: deps-node-modules-${{hashFiles('13-caching/react-app/package-lock.json')}}" >> "$GITHUB_OUTPUT"
+
+      - name: Download cache dependencies
+        uses: actions/cache@v3
+        if: ${{ inputs.use-cache }}
+        id: cache
+        with:
+          path: 13-caching/react-app/node_modules
+          key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+
+      - name: Install dependencies
+        working-directory: 13-caching/react-app
+        if: steps.cache.outputs.cache-hit != 'true' || !inputs.use-cache
+        run: npm install
+
+  lint-test:
+    runs-on: self-hosted
+    needs: install-dependencies
     defaults:
       run:
         shell: bash
@@ -39,20 +75,43 @@ jobs:
         id: cache
         with:
           path: 13-caching/react-app/node_modules
-          key: deps-node-modules-${{hashFiles('13-caching/react-app/package-lock.json')}}
-
-      - name: Install dependencies
-        working-directory: 13-caching/react-app
-        if: steps.cache.outputs.cache-hit != 'true' || !inputs.use-cache
-        run: npm install
+          key: ${{ needs.install-dependencies.outputs.deps-cache-key }}
 
       - name: Testing
         working-directory: 13-caching/react-app
         run: npm run test
 
-      - name: Build
+      - name: Lint
         working-directory: 13-caching/react-app
-        run: npm run build
+        run: echo "Linting..."
 
       - name: Deploy to nonprod environment
         run: echo "Deploying to nonprod environment"
+
+  build:
+    runs-on: self-hosted
+    needs: install-dependencies
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Download cache dependencies
+        uses: actions/cache@v3
+        if: ${{ inputs.use-cache }}
+        id: cache
+        with:
+          path: 13-caching/react-app/node_modules
+          key: ${{ needs.install-dependencies.outputs.deps-cache-key }}
+
+      - name: Build
+        working-directory: 13-caching/react-app
+        run: npm run build
