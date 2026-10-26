@@ -14,7 +14,6 @@ jobs:
     defaults:
       run:
         shell: "bash --noprofile --norc -e -o pipefail {0}"
-        working-directory: 13-caching/react-app
 
     steps:
       - name: Checkout code
@@ -24,8 +23,10 @@ jobs:
         with:
           node-version: "20.x"
       - name: Install dependencies
+        working-directory: 13-caching/react-app
         run: npm install
       - name: Teststing
+        working-directory: 13-caching/react-app
         run: npm runtest
       - name: Build
         run: npm run build
