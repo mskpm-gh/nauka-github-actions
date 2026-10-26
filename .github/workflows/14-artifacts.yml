@@ -51,4 +51,4 @@ jobs:
           name: app
           path: build
       - name: Show folder structure
-        run: ls -R
+        run: ls -R build
