@@ -12,6 +12,7 @@ on:
         type: choice
         options:
           - "21.x"
+          - "20.x"
           - "18.x"
           - "16.x"
         default: "20.x"
