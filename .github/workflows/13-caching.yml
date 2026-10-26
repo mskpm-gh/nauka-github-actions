@@ -14,7 +14,7 @@ jobs:
     defaults:
       run:
         shell: "bash --noprofile --norc -e -o pipefail {0}"
-        working-directory: 13-caching\react-app
+        working-directory: 13-caching/react-app
 
     steps:
       - name: Checkout code
