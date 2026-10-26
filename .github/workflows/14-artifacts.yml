@@ -43,6 +43,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: test-build
     steps:
       - name: Download build artifacts files
         uses: actions/download-artifact@v4
