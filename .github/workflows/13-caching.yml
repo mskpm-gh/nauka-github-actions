@@ -38,10 +38,10 @@ jobs:
       - name: Calculate cache key
         id: cache-key
         run: |
-          echo "CACHE KEY=deps-node-modules-${{hashFiles('13-caching/react-app/package-lock.json')}}" >> "$GITHUB_OUTPUT"
+          echo "CACHE_KEY=deps-node-modules-${{ runner.os }}-${{ runner.arch }}-${{ inputs.node-version }}-${{ hashFiles('13-caching/react-app/package-lock.json') }}" >> "$GITHUB_OUTPUT"
 
       - name: Download cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ inputs.use-cache }}
         id: cache
         with:
@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         working-directory: 13-caching/react-app
         if: steps.cache.outputs.cache-hit != 'true' || !inputs.use-cache
-        run: npm install
+        run: npm ci
 
   lint-test:
     runs-on: self-hosted
@@ -70,12 +70,17 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Download cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ inputs.use-cache }}
         id: cache
         with:
           path: 13-caching/react-app/node_modules
           key: ${{ needs.install-dependencies.outputs.deps-cache-key }}
+
+      - name: Install dependencies
+        working-directory: 13-caching/react-app
+        if: steps.cache.outputs.cache-hit != 'true' || !inputs.use-cache
+        run: npm ci
 
       - name: Testing
         working-directory: 13-caching/react-app
@@ -105,12 +110,17 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Download cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ inputs.use-cache }}
         id: cache
         with:
           path: 13-caching/react-app/node_modules
           key: ${{ needs.install-dependencies.outputs.deps-cache-key }}
+
+      - name: Install dependencies
+        working-directory: 13-caching/react-app
+        if: steps.cache.outputs.cache-hit != 'true' || !inputs.use-cache
+        run: npm ci
 
       - name: Build
         working-directory: 13-caching/react-app
