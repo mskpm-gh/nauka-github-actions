@@ -51,7 +51,7 @@ jobs:
             size: small
           - color: green
             shape: triangle
-        steps:
-          - name: Dummy step
-            run: |
-              echo ""
+    steps:
+      - name: Dummy step
+        run: |
+          echo ""
