@@ -5,16 +5,35 @@ on:
 jobs:
   backwards-compatibility:
     name: ${{ matrix.os }} - Node ${{ matrix.node-version }}
-    runs-on: self-hosted
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
         node-version: [18.x, 19.x, 20.x]
         os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-20.04
+            node-version: 16.x
+            tag: experimental
+          - os: windows-2019
+            node-version: 16.x
+            tag: experimental
     steps:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Perform some test
+      - name: Fail if experimental
+        if: ${{ matrix.tag == 'experimental' }}
         run: |
-          echo "Running tests on Node.js ${{ matrix.node-version }} and OS ${{ matrix.os }}"
+          echo "This is an experimental configuration"
+          exit 1
+
+      - name: Perform some action
+        run: |
+          echo "Running on ${{ matrix.os }} with Node ${{ matrix.node-version }}"
+          sleep 10
+      - name: Upload test results
+        run: |
+          echo "Uploading test results"
+          sleep 5
