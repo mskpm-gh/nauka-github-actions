@@ -9,13 +9,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        node-version: [18.x, 19.x, 20.x]
+        node-version: [19.x, 20.x]
         os: [ubuntu-latest, windows-latest]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             node-version: 16.x
             tag: experimental
-          - os: windows-2019
+          - os: windows-latest
             node-version: 21.x
             tag: experimental
     steps:
@@ -37,3 +37,21 @@ jobs:
         run: |
           echo "Uploading test results"
           sleep 5
+
+  Include-example:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        color: [red, green]
+        shape: [circle, square]
+        size: [small, large]
+        include:
+          - color: red
+            shape: circle
+            size: small
+          - color: green
+            shape: triangle
+        steps:
+          - name: Dummy step
+            run: |
+              echo ""
