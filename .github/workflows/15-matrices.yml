@@ -15,28 +15,17 @@ jobs:
           - os: ubuntu-latest
             node-version: 16.x
             tag: experimental
-          - os: windows-latest
-            node-version: 21.x
-            tag: experimental
     steps:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Fail if experimental
-        if: ${{ matrix.tag == 'experimental' }}
-        run: |
-          echo "This is an experimental configuration"
-          exit 1
-
       - name: Perform some action
         run: |
           echo "Running on ${{ matrix.os }} with Node ${{ matrix.node-version }}"
-          sleep 10
       - name: Upload test results
         run: |
           echo "Uploading test results"
-          sleep 5
 
   Include-example:
     name: ${{ matrix.color }} - ${{ matrix.shape }} - ${{ matrix.size }}
@@ -52,6 +41,10 @@ jobs:
             size: small
           - color: green
             shape: triangle
+        exclude:
+          - color: red
+            shape: circle
+            size: small
     steps:
       - name: Dummy step
         run: echo ${{ matrix.color }} - ${{ matrix.shape }} - ${{ matrix.size }}
