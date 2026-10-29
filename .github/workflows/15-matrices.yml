@@ -5,7 +5,7 @@ on:
 jobs:
   backwards-compatibility:
     name: ${{ matrix.os }} - Node ${{ matrix.node-version }}
-    runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
     strategy:
       fail-fast: true
       matrix:
