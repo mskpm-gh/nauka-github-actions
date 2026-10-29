@@ -16,7 +16,7 @@ jobs:
             node-version: 16.x
             tag: experimental
           - os: windows-2019
-            node-version: 16.x
+            node-version: 21.x
             tag: experimental
     steps:
       - name: Setup node
