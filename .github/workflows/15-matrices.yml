@@ -1,7 +1,9 @@
 name: 15 - Working with Matrices
+defaults:
+  run:
+    shell: bash
 on:
   workflow_dispatch:
-
 jobs:
   backwards-compatibility:
     name: ${{ matrix.os }} - Node ${{ matrix.node-version }}
