@@ -41,8 +41,6 @@ jobs:
           - color: red
             shape: circle
             size: small
-          - color: green
-            shape: triangle
         exclude:
           - color: red
             shape: circle
