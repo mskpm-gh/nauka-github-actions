@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Running e2e tests in staging environment"
 
-  echo-prod:
+  deploy-prod-frontend-1:
     runs-on: self-hosted
     needs: e2e-tests
     environment: prod
@@ -34,4 +34,26 @@ jobs:
     steps:
       - name: Echo vars
         run: |
-          echo "Deploying to prod environment"
+          echo "Deploying to prod frontend 1"
+
+  deploy-prod-backend-1:
+    runs-on: self-hosted
+    needs: e2e-tests
+    environment: prod
+    env:
+      my-env-value: ${{ vars.MY_ENV_VALUE || 'default_value' }}
+    steps:
+      - name: Echo vars
+        run: |
+          echo "Deploying to prod backend 1"
+
+  deploy-prod-backend-2:
+    runs-on: self-hosted
+    needs: e2e-tests
+    environment: prod
+    env:
+      my-env-value: ${{ vars.MY_ENV_VALUE || 'default_value' }}
+    steps:
+      - name: Echo vars
+        run: |
+          echo "Deploying to prod backend 2"
