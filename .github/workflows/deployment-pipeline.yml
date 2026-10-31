@@ -1,0 +1,26 @@
+name: Deployment Pipeline
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+
+jobs:
+  # Zadanie testowe, które musi przejść przed merge
+  build-and-test:
+    runs-on: self-hosted
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: echo "Uruchamianie testów..."
+
+  # Zabezpieczone zadanie wdrożeniowe
+  deploy-to-production:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: echo "Wdrażanie kodu na produkcję..."

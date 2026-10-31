@@ -1,7 +1,6 @@
 name: 07 - Expression Example
 run-name: Expression Example | DEBUG - ${{ inputs.debug  && 'ON' || 'OFF' }}
 on: 
-  push:
   workflow_dispatch:
     inputs:
       debug:
