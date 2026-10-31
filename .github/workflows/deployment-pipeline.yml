@@ -1,0 +1,24 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Zadanie testowe, które musi przejść przed merge
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: echo "Uruchamianie testów..."
+
+  # Zabezpieczone zadanie wdrożeniowe
+  deploy-to-production:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: prod # <--- TO POWIĄZUJE ZADANIE Z TWOIMI REGUŁAMI CHRONIONYMI
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: echo "Wdrażanie kodu na produkcję..."
