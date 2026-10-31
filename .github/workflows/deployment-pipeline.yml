@@ -7,7 +7,8 @@ on:
 jobs:
   # Zadanie testowe, które musi przejść przed merge
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    environment: staging
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
@@ -17,7 +18,7 @@ jobs:
   deploy-to-production:
     needs: build-and-test
     runs-on: ubuntu-latest
-    environment: prod # <--- TO POWIĄZUJE ZADANIE Z TWOIMI REGUŁAMI CHRONIONYMI
+    environment: prod
     steps:
       - uses: actions/checkout@v4
       - name: Deploy
