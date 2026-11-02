@@ -1,6 +1,5 @@
 name: 08 - Using Variables Example
 on:
-  push:
   workflow_dispatch:
 env:
   GLOBAL_VAR: "global env variable!"
