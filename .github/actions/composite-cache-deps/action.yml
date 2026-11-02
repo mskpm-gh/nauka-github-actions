@@ -14,18 +14,20 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Cache NodeJs version ${{ inputs.node-version }}
+    - name: Setup NodeJs version ${{ inputs.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
 
     - name: Cache NPM dependencies
+      id: cache
       uses: actions/cache@v3
       with:
         path: ${{ inputs.working-directory }}/node_modules
         key: node-modules${{ hashFiles('${{ inputs.working-directory }}/package-lock.json') }}
+
     - name: Install NPM dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: npm install --prefix ${{ inputs.working-directory }}
+      run: npm ci
       shell: bash
       working-directory: ${{ inputs.working-directory }}
