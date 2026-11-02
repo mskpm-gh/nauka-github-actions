@@ -1,9 +1,20 @@
-name: 17 - Custom Actions Composite
+name: 17 - 1 - Custom Actions Composite
+run-name: 17 - 1 - Custom Actions Composite | env - ${{ inputs.target-env }}
+
 defaults:
   run:
     shell: bash
 on:
   workflow_dispatch:
+    inputs:
+      target-env:
+        description: '"dev" or "prod" Controls whether to install dev dependencies or not'
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
+        required: false
 env:
   working-directory: 17-custom-actions/react-app
 
@@ -20,6 +31,7 @@ jobs:
         with:
           node-version: 20.x
           working-directory: ${{ env.working-directory }}
+          target-env: ${{ inputs.target-env }}
 
       - name: Run tests
         run: npm run test

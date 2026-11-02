@@ -10,6 +10,10 @@ inputs:
     description: The working directory containing the package-lock.json file
     default: .
     required: false
+  target-env:
+    description: '"dev" or "prod" Controls whether to install dev dependencies or not'
+    default: dev
+    required: false
 
 runs:
   using: composite
@@ -28,6 +32,6 @@ runs:
 
     - name: Install NPM dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: npm ci
+      run: ${{ inputs.target-env == 'dev' && 'npm ci' || 'npm ci --omit=dev' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
