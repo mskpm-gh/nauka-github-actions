@@ -1,0 +1,17 @@
+name: 17 - 2 - Custom Actions - JS
+run-name: 17 - 2 - Custom Actions JS
+
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+
+jobs:
+  dependency-update:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for NPM Dependency Updates
+        uses: ./.github/actions/js-dependency-update
