@@ -36,7 +36,7 @@ async function run() {
   core.info(`[js-dependency-update]: working directory: ${workingDir}`);
 
   await exec.exec('npm', ['update'], { cwd: workingDir });
-  const { gitStatus } = await exec.getExecOutput('git status -s package*.json', [], { cwd: workingDir });
+  const gitStatus = await exec.getExecOutput('git status -s package*.json', [], { cwd: workingDir });
 
   if (gitStatus.stdout.length > 0) {
     core.info('[js-dependency-update]: There are uppdates available for the following files:');

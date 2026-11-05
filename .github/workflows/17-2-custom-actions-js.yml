@@ -15,7 +15,7 @@ on:
         default: update-dependencies
       working-dir:
         type: string
-        default: 17-2-custom-actions/react-app
+        default: 17-custom-actions/react-app
 
 jobs:
   dependency-update:
