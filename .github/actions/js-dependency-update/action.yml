@@ -8,7 +8,7 @@ inputs:
     default:
     required: false
   target-branch:
-    description: Target branch to use to create the PR
+    description: Automation-owned target branch, overwritten on updates; reuses an open PR to the base branch
     default: update-dependencies
     required: false
   working-directory:

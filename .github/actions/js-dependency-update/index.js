@@ -18,6 +18,11 @@ async function run() {
   };
 
   core.setSecret(ghToken);
+  if (baseBranch === targetBranch) {
+    core.setFailed('Target branch must differ from base branch.');
+    return;
+  }
+  await exec.exec('git', ['check-ref-format', '--branch', targetBranch], commonExecOpts);
   if (debug === 'true') {
     core.info(`Base branch: ${baseBranch}`);
     core.info(`Target branch: ${targetBranch}`);
@@ -50,7 +55,7 @@ async function run() {
 
     await exec.exec(`git config --global user.name "github-automation"`);
     await exec.exec(`git config --global user.email "github-automation@noreply.github.com"`);
-    await exec.exec(`git checkout -b ${targetBranch}`, [], { ...commonExecOpts });
+    await exec.exec('git', ['checkout', '-B', targetBranch], commonExecOpts);
 
     await exec.exec(`git add package*.json package-lock.json`, [], { ...commonExecOpts });
     await exec.exec(`git commit -m "chore: Update JS dependencies"`, [], { ...commonExecOpts });
@@ -59,29 +64,41 @@ async function run() {
     const octokit = github.getOctokit(ghToken);
     let pullRequest;
     try {
-      const response = await octokit.rest.pulls.create({
+      const existingPullRequests = await octokit.rest.pulls.list({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        title: `Update JS dependencies from ${targetBranch} to ${baseBranch}`,
-        head: targetBranch,
+        state: 'open',
+        head: `${github.context.repo.owner}:${targetBranch}`,
         base: baseBranch,
-        body: 'This pull request updates JS dependencies from the target branch to the base branch.'
+        per_page: 1
       });
-      pullRequest = response.data;
+      if (existingPullRequests.data.length > 0) {
+        pullRequest = existingPullRequests.data[0];
+        core.info(`[js-dependency-update]: Pull request updated: ${pullRequest.html_url}`);
+      } else {
+        const response = await octokit.rest.pulls.create({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          title: `Update JS dependencies from ${targetBranch} to ${baseBranch}`,
+          head: targetBranch,
+          base: baseBranch,
+          body: 'This pull request updates JS dependencies from the target branch to the base branch.'
+        });
+        pullRequest = response.data;
+        core.info(`[js-dependency-update]: Pull request created: ${pullRequest.html_url}`);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      core.error(`Failed to create pull request: ${message}`);
-      if (error.status === 403) {
+      core.error(`Failed to create or update pull request: ${message}`);
+      if (error && error.status === 403) {
         core.setFailed(
           'GitHub denied pull request creation. Enable "Allow GitHub Actions to create and approve pull requests" in repository Settings > Actions > General, or use a PAT/GitHub App token with pull request permissions.'
         );
       } else {
-        core.setFailed(`Failed to create pull request: ${message}`);
+        core.setFailed(`Failed to create or update pull request: ${message}`);
       }
       return;
     }
-
-    core.info(`[js-dependency-update]: Pull request created: ${pullRequest.html_url}`);
 
   } else {
     core.info('[js-dependency-update]: No updates available for package*.json files in this time.');
