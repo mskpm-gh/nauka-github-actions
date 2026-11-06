@@ -20,12 +20,18 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: dependency-update-${{ inputs.target-branch }}
+  cancel-in-progress: false
+
 jobs:
   dependency-update:
     runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.base-branch }}
       - name: Check for NPM Dependency Updates
         uses: ./.github/actions/js-dependency-update
         with:
