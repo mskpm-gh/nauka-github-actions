@@ -5,10 +5,10 @@ description: Checks if any updates are available for NPM dependencies, and creat
 inputs:
   base-branch:
     description: Base branch from which to check for updates
-    default:
+    default: main
     required: false
-  target-branch:
-    description: Automation-owned target branch, overwritten on updates; reuses an open PR to the base branch
+  head-branch:
+    description: Automation-owned head branch, overwritten on updates; reuses an open PR to the base branch
     default: update-dependencies
     required: false
   working-directory:
