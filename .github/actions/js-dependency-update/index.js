@@ -57,8 +57,9 @@ async function run() {
     await exec.exec(`git push origin ${targetBranch} --force`, [], { ...commonExecOpts });
 
     const octokit = github.getOctokit(ghToken);
+    let pullRequest;
     try {
-      await octokit.rest.pulls.create({
+      const response = await octokit.rest.pulls.create({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         title: `Update JS dependencies from ${targetBranch} to ${baseBranch}`,
@@ -66,14 +67,21 @@ async function run() {
         base: baseBranch,
         body: 'This pull request updates JS dependencies from the target branch to the base branch.'
       });
+      pullRequest = response.data;
     } catch (error) {
-      core.error(`Error creating pull request: ${error}`);
-      core.error(error)
-      core.setFailed(`Failed to create pull request: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      core.error(`Failed to create pull request: ${message}`);
+      if (error.status === 403) {
+        core.setFailed(
+          'GitHub denied pull request creation. Enable "Allow GitHub Actions to create and approve pull requests" in repository Settings > Actions > General, or use a PAT/GitHub App token with pull request permissions.'
+        );
+      } else {
+        core.setFailed(`Failed to create pull request: ${message}`);
+      }
+      return;
     }
 
-    core.info(`[js-dependency-update]: Pull request created from ${targetBranch} to ${baseBranch}`);
-
+    core.info(`[js-dependency-update]: Pull request created: ${pullRequest.html_url}`);
 
   } else {
     core.info('[js-dependency-update]: No updates available for package*.json files in this time.');
