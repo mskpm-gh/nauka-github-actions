@@ -3,93 +3,121 @@ const exec = require('@actions/exec');
 
 const github = require('@actions/github');
 
-const validateBranchName = ({ branchName }) => { /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName) };
-const validateDirectoryName = ({ dirName }) => { /^[a-zA-Z0-9_\-\/]+$/.test(dirName) };
+const validateBranchName = ({ branchName }) => /^[a-zA-Z0-9_\-\.\/]+$/.test(branchName);
+const validateDirectoryName = ({ dirName }) => /^[a-zA-Z0-9_\-\/]+$/.test(dirName);
+
+const setupLogger = ({ debug, prefix } = { debug: false, prefix: '' }) => ({
+  debug: (message) => {
+    if (debug) {
+      core.info(`[DEBUG] ${prefix}${prefix ? ' : ' : ''}${message}`);
+    }
+  },
+  info: (message) => {
+    core.info(`${prefix}${prefix ? ' : ' : ''}${message}`);
+  },
+  error: (message) => {
+    core.error(`${prefix}${prefix ? ' : ' : ''}${message}`);
+  }
+});
+
 
 async function run() {
   const baseBranch = core.getInput('base-branch', { required: true });
-  const targetBranch = core.getInput('target-branch', { required: true });
+  const headBranch = core.getInput('head-branch', { required: true });
   const ghToken = core.getInput('gh-token', { required: true });
   const workingDir = core.getInput('working-directory', { required: true });
   const debug = core.getInput('debug');
+  const logger = setupLogger({ debug: debug === 'true', prefix: '[js-dependency-update]' });
 
   const commonExecOpts = {
     cwd: workingDir
   };
 
+  const setupGit = async () => {
+    await exec.exec('git', ['config', '--local', 'user.name', 'github-automation'], commonExecOpts);
+    await exec.exec('git', ['config', '--local', 'user.email', 'github-automation@noreply.github.com'], commonExecOpts);
+  };
+
   core.setSecret(ghToken);
-  if (baseBranch === targetBranch) {
-    core.setFailed('Target branch must differ from base branch.');
+
+  logger.debug(`Starting with base branch: ${baseBranch}, head branch: ${headBranch}, working directory: ${workingDir}`);
+
+  if (!validateBranchName({ branchName: baseBranch })) {
+    core.setFailed('Base branch name is invalid. Should include only characters a-z, A-Z, 0-9, _, -, ., /');
     return;
   }
-  await exec.exec('git', ['check-ref-format', '--branch', targetBranch], commonExecOpts);
-  if (debug === 'true') {
-    core.info(`Base branch: ${baseBranch}`);
-    core.info(`Target branch: ${targetBranch}`);
-    core.info(`Working directory: ${workingDir}`);
-
-    if (validateBranchName({ branchName: baseBranch })) {
-      core.setFailed(`Base branch name is valid. Should include only characters a-z, A-Z, 0-9, _, -, ., /`);
-      return;
-    }
-    if (validateBranchName({ branchName: targetBranch })) {
-      core.setFailed(`Target branch name is valid. Should include only characters a-z, A-Z, 0-9, _, -, ., /`);
-      return;
-    }
-    if (validateDirectoryName({ dirName: workingDir })) {
-      core.setFailed(`Working directory name is valid. Should include only characters a-z, A-Z, 0-9, _, -, /`);
-      return;
-    }
+  if (!validateBranchName({ branchName: headBranch })) {
+    core.setFailed('Head branch name is invalid. Should include only characters a-z, A-Z, 0-9, _, -, ., /');
+    return;
   }
+  if (!validateDirectoryName({ dirName: workingDir })) {
+    core.setFailed('Working directory name is invalid. Should include only characters a-z, A-Z, 0-9, _, -, /');
+    return;
+  }
+  if (baseBranch === headBranch) {
+    core.setFailed('Head branch must differ from base branch.');
+    return;
+  }
+  await exec.exec('git', ['check-ref-format', '--branch', baseBranch], commonExecOpts);
+  await exec.exec('git', ['check-ref-format', '--branch', headBranch], commonExecOpts);
 
-  core.info(`[js-dependency-update]: base branch: ${baseBranch}`);
-  core.info(`[js-dependency-update]: target branch: ${targetBranch}`);
-  core.info(`[js-dependency-update]: working directory: ${workingDir}`);
+
+  logger.debug(`Base branch: ${baseBranch}`);
+  logger.debug(`Head branch: ${headBranch}`);
+  logger.debug(`Working directory: ${workingDir}`);
+
+  logger.debug(`Checking for package updates`);
 
   await exec.exec('npm', ['update'], { ...commonExecOpts });
-  const gitStatus = await exec.getExecOutput('git status -s package*.json', [], { ...commonExecOpts });
+  const gitStatus = await exec.getExecOutput('git', ['status', '--short', '--', 'package*.json'], commonExecOpts);
 
   if (gitStatus.stdout.length > 0) {
-    core.info('[js-dependency-update]: There are uppdates available for the following files:');
-    core.info(gitStatus.stdout);
+    logger.info('There are updates available for the following files:');
+    logger.info(gitStatus.stdout);
 
-    await exec.exec(`git config --global user.name "github-automation"`);
-    await exec.exec(`git config --global user.email "github-automation@noreply.github.com"`);
-    await exec.exec('git', ['checkout', '-B', targetBranch], commonExecOpts);
+    logger.debug('Setting up Git commit identity');
+    await setupGit();
 
-    await exec.exec(`git add package*.json package-lock.json`, [], { ...commonExecOpts });
-    await exec.exec(`git commit -m "chore: Update JS dependencies"`, [], { ...commonExecOpts });
-    await exec.exec(`git push origin ${targetBranch} --force`, [], { ...commonExecOpts });
+    logger.debug(`Committing changes to branch: ${headBranch}`);
+    await exec.exec('git', ['checkout', '-B', headBranch], commonExecOpts);
+
+    await exec.exec('git', ['add', '--', 'package*.json'], commonExecOpts);
+    await exec.exec('git', ['commit', '-m', 'chore: Update JS dependencies'], commonExecOpts);
+    await exec.exec('git', ['push', 'origin', headBranch, '--force'], commonExecOpts);
+
+    logger.debug(`Fetching octokit API client for GitHub API interactions`);
 
     const octokit = github.getOctokit(ghToken);
     let pullRequest;
     try {
+      logger.debug(`Checking for an open PR from ${headBranch} to ${baseBranch}`);
       const existingPullRequests = await octokit.rest.pulls.list({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         state: 'open',
-        head: `${github.context.repo.owner}:${targetBranch}`,
+        head: `${github.context.repo.owner}:${headBranch}`,
         base: baseBranch,
         per_page: 1
       });
       if (existingPullRequests.data.length > 0) {
         pullRequest = existingPullRequests.data[0];
-        core.info(`[js-dependency-update]: Pull request updated: ${pullRequest.html_url}`);
+        logger.info(`Pull request updated: ${pullRequest.html_url}`);
       } else {
         const response = await octokit.rest.pulls.create({
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
-          title: `Update JS dependencies from ${targetBranch} to ${baseBranch}`,
-          head: targetBranch,
+          title: `Update JS dependencies from ${headBranch} to ${baseBranch}`,
+          head: headBranch,
           base: baseBranch,
-          body: 'This pull request updates JS dependencies from the target branch to the base branch.'
+          body: 'This pull request updates JS dependencies from the head branch to the base branch.'
         });
         pullRequest = response.data;
-        core.info(`[js-dependency-update]: Pull request created: ${pullRequest.html_url}`);
+        logger.info(`Pull request created: ${pullRequest.html_url}`);
       }
+
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      core.error(`Failed to create or update pull request: ${message}`);
+      logger.error(`Failed to create or update pull request: ${message}`);
       if (error && error.status === 403) {
         core.setFailed(
           'GitHub denied pull request creation. Enable "Allow GitHub Actions to create and approve pull requests" in repository Settings > Actions > General, or use a PAT/GitHub App token with pull request permissions.'
@@ -101,26 +129,13 @@ async function run() {
     }
 
   } else {
-    core.info('[js-dependency-update]: No updates available for package*.json files in this time.');
+    logger.info('No updates available for package*.json files at this time.');
   }
-  core.info('[js-dependency-update]: Finished checking for updates.');
-  core.info('[js-dependency-update]: Action completed.');
-  core.info('[js-dependency-update]: Exiting action.');
+  logger.debug('Finished checking for updates.');
+  logger.debug('Action completed.');
+  logger.debug('Exiting action.');
 
-  /*
-[Done]  1. Parse inputs:
-   1.1 base-branch from which to check for updates
-   1.2 target-branch to use to create the PR
-   1.3 Github Token for authentication purposes (to create PRs)
-   1.4 Working directory for which to check for dependencies
-[Done]  2. Execute the npm update command within the working directory
-[Done]  3. Check whether there are modified package*.json files
-[Done] 4. If there are modified files:
-  4.1 Add and commit files to the target-branch
-  4.2 Create a PR to the base-branch using the octokit API
-[Done] 5. Otherwise, conclude the custom action
-*/
-  core.info("I'm custom JS action'");
 }
-
-run();
+run().catch((error) => {
+  core.setFailed(error instanceof Error ? error.message : String(error));
+});
