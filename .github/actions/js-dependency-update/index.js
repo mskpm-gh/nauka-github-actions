@@ -42,7 +42,7 @@ async function run() {
   core.info(`[js-dependency-update]: working directory: ${workingDir}`);
 
   await exec.exec('npm', ['update'], { ...commonExecOpts });
-  const { gitStatus } = await exec.getExecOutput('git status -s package*.json', [], { ...commonExecOpts });
+  const gitStatus = await exec.getExecOutput('git status -s package*.json', [], { ...commonExecOpts });
 
   if (gitStatus.stdout.length > 0) {
     core.info('[js-dependency-update]: There are uppdates available for the following files:');
@@ -72,11 +72,6 @@ async function run() {
       core.setFailed(`Failed to create pull request: ${error.message}`);
     }
 
-    await createPullRequest({
-      baseBranch,
-      targetBranch,
-      ghToken
-    });
     core.info(`[js-dependency-update]: Pull request created from ${targetBranch} to ${baseBranch}`);
 
 
