@@ -1,0 +1,24 @@
+name: Docker Ping URL
+
+description: Ping a URL using Docker until trials have been exceeded. If results is not until 200, then the action will fail
+
+inputs:
+  url:
+    description: URL to ping
+    required: true
+  max-trials:
+    description: Maximum number of trials to attempt
+    required: false
+    default: 10
+  delay:
+    description: Delay between trials in seconds
+    required: false
+    default: 5
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.url }}
+    - ${{ inputs.max-trials }}
+    - ${{ inputs.delay }}
