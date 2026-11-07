@@ -17,7 +17,7 @@ inputs:
 
 runs:
   using: docker
-  image: Dockerfile
+  image: dockerfile
   args:
     - ${{ inputs.url }}
     - ${{ inputs.max-trials }}
