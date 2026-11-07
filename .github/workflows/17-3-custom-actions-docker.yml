@@ -1,0 +1,22 @@
+name: 17 - 3 - Custom Actions - Docker
+
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        type: string
+        default: "https://www.google.com"
+
+jobs:
+  ping-url:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping URL
+        uses: ./.github/actions/docker-ping-url
+        with:
+          url: ${{ inputs.url }}
