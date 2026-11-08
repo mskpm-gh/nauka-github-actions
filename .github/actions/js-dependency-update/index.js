@@ -71,7 +71,12 @@ async function run() {
   await exec.exec('npm', ['update'], { ...commonExecOpts });
   const gitStatus = await exec.getExecOutput('git', ['status', '--short', '--', 'package*.json'], commonExecOpts);
 
+  let updatesAvailable = false;
+
   if (gitStatus.stdout.length > 0) {
+
+    updatesAvailable = true;
+
     logger.info('There are updates available for the following files:');
     logger.info(gitStatus.stdout);
 
@@ -99,7 +104,14 @@ async function run() {
         base: baseBranch,
         per_page: 1
       });
+      logger.info(`No existing pull request found for this update.`);
+      core.setOutput('updates-available', 'false');
+
       if (existingPullRequests.data.length > 0) {
+        updatesAvailable = true;
+        core.setOutput('updates-available', 'true');
+        logger.info(`Existing pull request found: ${existingPullRequests.data[0].html_url}`);
+        logger.info(`Pull request already exists for this update.`);
         pullRequest = existingPullRequests.data[0];
         logger.info(`Pull request updated: ${pullRequest.html_url}`);
       } else {
@@ -134,6 +146,9 @@ async function run() {
   logger.debug('Finished checking for updates.');
   logger.debug('Action completed.');
   logger.debug('Exiting action.');
+
+  logger.debug(`Setting output 'updates-available' to ${updatesAvailable}.`);
+  core.setOutput('updates-available', updatesAvailable);
 
 }
 run().catch((error) => {
