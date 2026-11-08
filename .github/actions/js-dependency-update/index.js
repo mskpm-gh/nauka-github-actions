@@ -104,17 +104,13 @@ async function run() {
         base: baseBranch,
         per_page: 1
       });
-      logger.info(`No existing pull request found for this update.`);
-      core.setOutput('updates-available', 'false');
-
       if (existingPullRequests.data.length > 0) {
-        updatesAvailable = true;
-        core.setOutput('updates-available', 'true');
         logger.info(`Existing pull request found: ${existingPullRequests.data[0].html_url}`);
         logger.info(`Pull request already exists for this update.`);
         pullRequest = existingPullRequests.data[0];
         logger.info(`Pull request updated: ${pullRequest.html_url}`);
       } else {
+        logger.info('No existing pull request found for this update.');
         const response = await octokit.rest.pulls.create({
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
