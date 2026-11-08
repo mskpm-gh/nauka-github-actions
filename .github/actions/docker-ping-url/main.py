@@ -1,4 +1,4 @@
-import os
+import argparse
 import requests
 from time import sleep
 
@@ -26,9 +26,14 @@ def ping_url(url, delay, max_trials):
 
 
 def run():
-    website_url = os.getenv("INPUT_URL")
-    delay = os.getenv("INPUT_DELAY")
-    max_trials = os.getenv("INPUT_MAX_TRIALS")
+    parser = argparse.ArgumentParser(description="Ping a URL until it is reachable.")
+    parser.add_argument("url")
+    parser.add_argument("max_trials", type=int)
+    parser.add_argument("delay", type=int)
+    args = parser.parse_args()
+    website_url = args.url
+    delay = args.delay
+    max_trials = args.max_trials
 
     website_reachable = ping_url(website_url, delay, max_trials)
 
