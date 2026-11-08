@@ -7,8 +7,20 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        type: string
+        type: choice
+        options:
+          - "https://www.google.com"
+          - "https://www.invalid-url.com"
+          - "non-url-format.con"
         default: "https://www.google.com"
+      max-trials:
+        description: Maximum number of trials to attempt
+        required: false
+        default: "10"
+      delay:
+        description: Delay between trials in seconds
+        required: false
+        default: "5"
 
 jobs:
   ping-url:
@@ -20,3 +32,5 @@ jobs:
         uses: ./.github/actions/docker-ping-url
         with:
           url: ${{ inputs.url }}
+          max-trials: ${{ inputs.max-trials }}
+          delay: ${{ inputs.delay }}
