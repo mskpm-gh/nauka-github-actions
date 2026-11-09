@@ -71,7 +71,12 @@ async function run() {
   await exec.exec('npm', ['update'], { ...commonExecOpts });
   const gitStatus = await exec.getExecOutput('git', ['status', '--short', '--', 'package*.json'], commonExecOpts);
 
+  let updatesAvailable = false;
+
   if (gitStatus.stdout.length > 0) {
+
+    updatesAvailable = true;
+
     logger.info('There are updates available for the following files:');
     logger.info(gitStatus.stdout);
 
@@ -100,9 +105,12 @@ async function run() {
         per_page: 1
       });
       if (existingPullRequests.data.length > 0) {
+        logger.info(`Existing pull request found: ${existingPullRequests.data[0].html_url}`);
+        logger.info(`Pull request already exists for this update.`);
         pullRequest = existingPullRequests.data[0];
         logger.info(`Pull request updated: ${pullRequest.html_url}`);
       } else {
+        logger.info('No existing pull request found for this update.');
         const response = await octokit.rest.pulls.create({
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
@@ -134,6 +142,9 @@ async function run() {
   logger.debug('Finished checking for updates.');
   logger.debug('Action completed.');
   logger.debug('Exiting action.');
+
+  logger.debug(`Setting output 'updates-available' to ${updatesAvailable}.`);
+  core.setOutput('updates-available', updatesAvailable);
 
 }
 run().catch((error) => {

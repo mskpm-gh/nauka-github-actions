@@ -10,6 +10,7 @@ async function runAction({ inputs = {}, stdout = ' M package-lock.json\n', exist
   const calls = [];
   const messages = [];
   const failures = [];
+  const outputs = [];
   const values = {
     'base-branch': 'main',
     'head-branch': 'update-dependencies',
@@ -23,6 +24,7 @@ async function runAction({ inputs = {}, stdout = ' M package-lock.json\n', exist
     setSecret: () => {},
     info: (message) => messages.push(message),
     error: () => {},
+    setOutput: (name, value) => outputs.push({ name, value }),
     setFailed: (message) => failures.push(message)
   };
   const exec = {
@@ -53,12 +55,13 @@ async function runAction({ inputs = {}, stdout = ' M package-lock.json\n', exist
   };
   const modules = { '@actions/core': core, '@actions/exec': exec, '@actions/github': github };
   await vm.runInNewContext(source, { require: (name) => modules[name], Error });
-  return { calls, messages, failures };
+  return { calls, messages, failures, outputs };
 }
 
 test('updates the reusable branch and creates a PR with debug disabled', async () => {
   const result = await runAction();
   assert.deepEqual(result.failures, []);
+  assert.deepEqual(result.outputs, [{ name: 'updates-available', value: true }]);
   assert(result.calls.some(({ command, args }) => command === 'git' && args.join(' ') === 'checkout -B update-dependencies'));
   assert(result.calls.some(({ command, args }) => command === 'git' && args.join(' ') === 'push origin update-dependencies --force'));
   assert(result.calls.filter(({ command }) => command === 'git' || command === 'npm')
@@ -73,6 +76,7 @@ test('updates the reusable branch and creates a PR with debug disabled', async (
 test('reuses an existing open PR', async () => {
   const result = await runAction({ existing: [{ html_url: 'https://example.invalid/existing-pr' }] });
   assert.deepEqual(result.failures, []);
+  assert.deepEqual(result.outputs, [{ name: 'updates-available', value: true }]);
   assert(!result.calls.some(({ command }) => command === 'pulls.create'));
   assert(result.messages.some((message) => message.includes('Pull request updated:')));
 });
@@ -80,6 +84,7 @@ test('reuses an existing open PR', async () => {
 test('does not create a branch or PR without dependency updates', async () => {
   const result = await runAction({ stdout: '' });
   assert.deepEqual(result.failures, []);
+  assert.deepEqual(result.outputs, [{ name: 'updates-available', value: false }]);
   assert(!result.calls.some(({ command, args = [] }) => command.startsWith('pulls.') || args.includes('checkout')));
   assert(result.messages.some((message) => message.includes('No updates available')));
 });

@@ -21,6 +21,9 @@ inputs:
     description: Whether to enable debug mode
     default: "false"
     required: false
+outputs:
+  updates-available:
+    description: Indicates if updates are available for NPM dependencies
 
 runs:
   using: node20
