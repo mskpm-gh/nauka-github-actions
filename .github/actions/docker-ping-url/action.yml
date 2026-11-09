@@ -15,6 +15,10 @@ inputs:
     required: false
     default: 5
 
+outputs:
+  url-reachable:
+    description: Whetcher the website is reachable (HTTP 200)
+
 runs:
   using: docker
   image: dockerfile

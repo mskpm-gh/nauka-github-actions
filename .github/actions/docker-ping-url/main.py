@@ -3,6 +3,10 @@ import requests
 from time import sleep
 
 
+def set_output(file_path, key, value):
+    with open(file_path, "a") as file:
+        print(f"{key}={value}", file=file)
+
 def ping_url(url, delay, max_trials):
     delay = int(delay)
     max_trials = int(max_trials)
@@ -36,6 +40,8 @@ def run():
     max_trials = args.max_trials
 
     website_reachable = ping_url(website_url, delay, max_trials)
+
+    set_output(os.getenv('GITHUB_OUTPUT'), 'url_reachable', website_reachable)
 
     if not website_reachable:
         print(f"Website {website_url} is not reachable after {max_trials} attempts.")
