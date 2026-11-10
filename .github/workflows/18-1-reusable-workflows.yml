@@ -4,13 +4,13 @@ on:
     inputs:
       target-directory:
         type: string
-        required: true
+        required: false
 
   workflow_call:
     inputs:
       target-directory:
         type: string
-        required: true
+        required: false
     outputs:
       build-status:
         description: The status of the build process
