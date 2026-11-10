@@ -21,8 +21,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: |
-      self-hosted,
+    runs-on: self-hosted
     outputs:
       build-status: ${{ steps.build.outputs.build-status }}
       url: ${{ steps.deploy.outputs.url }}
