@@ -1,11 +1,5 @@
 name: 18.1 - Reusable Workflows - Reusable Definition
 on:
-  workflow_dispatch:
-    inputs:
-      target-directory:
-        type: string
-        required: false
-
   workflow_call:
     inputs:
       target-directory:
