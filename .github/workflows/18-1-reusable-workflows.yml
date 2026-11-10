@@ -7,6 +7,10 @@ on:
         required: true
 
   workflow_call:
+    inputs:
+      target-directory:
+        type: string
+        required: true
     outputs:
       build-status:
         description: The status of the build process

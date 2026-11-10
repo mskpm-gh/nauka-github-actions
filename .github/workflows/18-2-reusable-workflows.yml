@@ -5,10 +5,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
-    uses: ./.github/workflows/18-1-reusable-workflow.yml
+    uses: ./.github/workflows/18-1-reusable-workflows.yml
     with:
-      target_directory: dummy_dir
+      target-directory: dummy-dir
   print_outputs:
     runs-on: self-hosted
     needs: deploy
